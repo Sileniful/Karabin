@@ -1,0 +1,15 @@
+wywo³ywac funkcje od karabin
+
+schodzic na nizsze poziomy wywo³ywuj¹c funkcje 
+
+dorobic konstruktory kopiujace
+destruktory virtualne
+operator przypisania
+operator dodawania
+operator strumienia
+
+jak ma dzialac
+
+karabin(wywo³anie)->magazynek(pobranie wartoœci)->
+->naboj(zwrócenie wartoœci)->magazynek(sumowanie)->
+->karabin(wyœwietlenie)
