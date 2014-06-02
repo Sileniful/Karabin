@@ -3,87 +3,85 @@
 // Author      : Silen
 // Version     : 1.0
 // Copyright   :
-// Description : Projekt na zajêcia
+// Description : Projekt na zajÄ™cia
 //============================================================================
 
 #include <iostream>
 
 using namespace std;
 
-class Karabin{
-
+class Amunition{
 public:
-    class Magazynek{
+ virtual Amunition * cloneBullet() const = 0;				//tworzenie obiektow
+ virtual int ammoDamage()=0;
+ virtual ~Amunition(){}
+};
 
-    int wybor=0;
-    public:
-        class Amunicja{
-        public:
-            virtual int ammoDmg()=0;
-            virtual ~Amunicja(){}
-        };
-
-        class Odlamkowe : public Amunicja{
-
-        public:
-            int ammoDmg(){
-                return 25;
-            }
-        };
-
-        class Dymne : public Amunicja{
-        public:
-            int ammoDmg(){
-                return 10;
-            }
-        };
-
-        class Zapalajace : public Amunicja{
-        public:
-            int ammoDmg(){
-                return 1;
-            }
-        };
-
-
-  int dodajNaboj(){
-    Amunicja *pointAmmo;
-
-    cout<<"Podaj co chcesz wybrac: 1 Odlamkowe 2 Dymne 3 Zapalajace"<<endl;
-    cin >> wybor;
-
-        if(wybor==0){
-                pointAmmo = new Odlamkowe;
-            }
-        else if(wybor==1){
-                pointAmmo = new Dymne;
-            }
-        else if (wybor==2){
-                pointAmmo = new Zapalajace;
-            }
-    pointAmmo->ammoDmg();
-
-    int sumaObrazen=0;
-    sumaObrazen+=pointAmmo->ammoDmg();
-
-
-
-    return (sumaObrazen);
+class FagmentationBullet : public Amunition{
+public:
+ FagmentationBullet * cloneBullet() const {
+   return new FagmentationBullet( *this );
+  }
+ int ammoDamage(){
+   return 25;
   }
 };
-Magazynek X;
-    int suma;
-    void sumaObrazen(){
-    	suma+=X.dodajNaboj();
-        cout<<"Suma obrazen: "<<suma<<endl;
-    }
+
+class SmokeBullet : public Amunition{
+public:
+ SmokeBullet * cloneBullet() const {
+   return new SmokeBullet( *this );
+  }
+ int ammoDamage(){
+   return 10;
+  }
 };
 
-int main()
-{
-    Karabin A;
-    for (int i=0;i<3;++i)
-    A.sumaObrazen();
-    return 0;
-}
+class IncendiaryBullet : public Amunition{
+public:
+ IncendiaryBullet * cloneBullet() const {
+   return new IncendiaryBullet( *this );
+  }
+ int ammoDamage(){
+   return 1;
+  }
+};
+class Magazine{
+private:
+ Amunition *bulletPointer[25];
+public:
+ Magazine (){								//konstruktor do zapelnienia NULL
+  for (int i=0;i<25;i++){
+    bulletPointer[i] = NULL;
+   }
+  }
+ Magazine(Magazine & originalBullet){		//konstruktor kopiujacy
+  for (int i=0;i<25;i++){
+    bulletPointer[i] = originalBullet.bulletPointer[i]->cloneBullet();
+  }
+      }
+ Magazine& operator=(Magazine & originalBullet){   //operator przypisania
+  if (this==&originalBullet){						//czesc warunkowa
+    return *this;
+   }
 
+  for (int i=0;i<25;i++){							//czesc odsmiecania
+    delete bulletPointer[i];
+   }
+  for (int i=0;i<25;i++){							//czesc przypisania
+    if (originalBullet.bulletPointer[i]!=NULL) {
+      bulletPointer[i] = originalBullet.bulletPointer[i]->cloneBullet();
+    }
+    else{
+      bulletPointer[i] = NULL;
+    }
+   }
+  return *this;
+  }
+ virtual ~Magazine() {								//destruktor virtualny
+  for (int i=0;i<25;i++){
+    delete bulletPointer[i];
+    bulletPointer[i]=NULL;
+   }
+  }
+ };
